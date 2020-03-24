@@ -5,3 +5,5 @@
 /.vs/BookFinderApp/v16
 /obj
 .gitignore
+/.vs/BookFinderApp/DesignTimeBuild
+/bin/Debug/netcoreapp3.1

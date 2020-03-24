@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 
-namespace VideogameDatabaseSystem.DatabaseSystem
+namespace BookFinderApp
 {
 	public class DatabaseConnector
 	{
@@ -30,20 +31,18 @@ namespace VideogameDatabaseSystem.DatabaseSystem
 			Console.WriteLine("Connection Successful");
 		}
 
-		public void ExecuteQuery(string sqlToExecute)
+		public List<Book> ExecuteQuery(string sqlToExecute)
 		{
 			SqlCommand command = new SqlCommand(sqlToExecute, conn);
+			List<Book> books = new List<Book>();
 
-			if (sqlToExecute[0].Equals('S')) {
-				using (SqlDataReader reader = command.ExecuteReader()) {
-					while (reader.Read()) {
-						Console.WriteLine(string.Format("| {0} \t | {1} \t | {2} \t | {3}",
-							reader[0], reader[1], reader[2], reader[3]));
-					}
+			using (SqlDataReader reader = command.ExecuteReader()) {
+				while (reader.Read()) {
+					books.Add(CreateBook(reader));
 				}
-			} else {
-				command.ExecuteNonQuery();
 			}
+
+			return books;
 		}
 
 		public void CloseConnection()
@@ -52,6 +51,20 @@ namespace VideogameDatabaseSystem.DatabaseSystem
 			Console.WriteLine("Connection Closed");
 			conn.Dispose();
 			Console.WriteLine("Connection Disposed");
+		}
+
+		#endregion
+
+		#region Private Helper Functions
+
+		private static Book CreateBook(SqlDataReader reader)
+		{
+			string title = reader[0].ToString();
+			string author = reader[1].ToString();
+			DateTime publishedDate = (DateTime) reader[2];
+			string imagePath = reader[3].ToString();
+
+			return new Book(title, author, publishedDate, imagePath);
 		}
 
 		#endregion
