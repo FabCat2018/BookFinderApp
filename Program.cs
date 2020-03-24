@@ -15,7 +15,6 @@ namespace BookFinderApp
 			while (!stop) {
 				// TODO: Implement flag to check connection should remain open
 				List<Book> books = FindBooks(connector);
-				Console.WriteLine(books[0].Title);
 				stop = true;
 			}
 
@@ -35,15 +34,16 @@ namespace BookFinderApp
 
 		private static List<Book> FindBooks(DatabaseConnector connector)
 		{
-			string searchTerm = "Potter"; // Setup way of transferring term from React to here
+			string searchTerm = ""; // Setup way of transferring term from React to here
 			List<Book> books = RunSelectQuery(connector, searchTerm);
 			return books;
 		}
 
 		private static List<Book> RunSelectQuery(DatabaseConnector connector, string searchTerm)
 		{
-			string sql = string.Format("SELECT * FROM [dbo].[book_list] WHERE [Title] LIKE '%{0}%'", searchTerm);
-			List<Book> books = connector.ExecuteQuery(sql);
+			string sql = string.Format("SELECT * FROM [dbo].[book_list] WHERE [Title] LIKE '%{0}%' " +
+				"OR [Author] LIKE '%{1}%' OR [Published Date] LIKE '%{2}%'", searchTerm);
+			List <Book> books = connector.ExecuteQuery(sql);
 			return books;
 		}
 
